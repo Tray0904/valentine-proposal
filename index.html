@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine? 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffd4e8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Floating hearts background */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart-float {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.3;
+            animation: float-up 8s infinite ease-in;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Page 1 - Envelope Opening */
+        #page1 h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.5em;
+            color: #ff1e70;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(255, 30, 112, 0.2);
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 400px;
+            height: 260px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        .envelope {
+            position: relative;
+            width: 400px;
+            height: 260px;
+        }
+
+        /* Main envelope rectangle body */
+        .envelope-back {
+            position: absolute;
+            width: 400px;
+            height: 220px;
+            background: #ffb3d9;
+            bottom: 0;
+            border-radius: 4px;
+            z-index: 8;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .envelope-body {
+            position: absolute;
+            width: 400px;
+            height: 220px;
+            bottom: 0;
+            left: 0;
+            z-index: 2;
+        }
+
+        /* Cover/mask for the envelope opening */
+        .envelope-opening-mask {
+            position: absolute;
+            width: 400px;
+            height: 130px;
+            bottom: 0;
+            left: 0;
+            background: #ffb3d9;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        /* Bottom flap - back side visible */
+        .envelope-bottom-flap {
+            position: absolute;
+            width: 400px;
+            height: 0;
+            border-left: 200px solid #ff99c2;
+            border-right: 200px solid #ff99c2;
+            border-bottom: 110px solid transparent;
+            bottom: 110px;
+            left: 0;
+            z-index: 2;
+        }
+
+        /* Left side flap */
+        .envelope-left-flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 110px solid transparent;
+            border-bottom: 110px solid transparent;
+            border-left: 80px solid #ffaed4;
+            left: 0;
+            bottom: 0;
+            z-index: 11;
+        }
+
+        /* Right side flap */
+        .envelope-right-flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 110px solid transparent;
+            border-bottom: 110px solid transparent;
+            border-right: 80px solid #ffc4e0;
+            right: 0;
+            bottom: 0;
+            z-index: 11;
+        }
+
+        /* Top closing flap */
+        .envelope-top-flap {
+            position: absolute;
+            width: 400px;
+            height: 0;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-top: 130px solid #ff5a9e;
+            top: 40px;
+            left: 0;
+            z-index: 5;
+            transform-origin: 50% 0%;
+            transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .envelope.opening .envelope-top-flap {
+            transform: rotateX(-180deg);
+        }
+
+        /* Letter inside */
+        .letter {
+            position: absolute;
+            width: 340px;
+            height: 190px;
+            background: #ffffff;
+            border-radius: 6px;
+            left: 50%;
+            bottom: 15px;
+            transform: translateX(-50%) translateY(0);
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) 1s, opacity 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) 1s;
+            border: 1px solid #ffe8f5;
+            opacity: 0;
+        }
+
+        .envelope.opening .letter {
+            transform: translateX(-50%) translateY(-110px);
+            opacity: 1;
+        }
+
+        .letter-content {
+            font-family: 'Pacifico', cursive;
+            color: #ff1e70;
+            font-size: 1.3em;
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        /* Wax seal with heart */
+        .heart-seal {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #ff1e70, #ff4d8f);
+            border-radius: 50%;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            box-shadow: 0 4px 12px rgba(255, 30, 112, 0.6);
+            transition: all 0.5s ease;
+            border: 3px solid #fff;
+        }
+
+        .envelope.opening .heart-seal {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.3);
+        }
+
+        .click-hint {
+            margin-top: 30px;
+            color: #ff1e70;
+            font-size: 1.2em;
+            animation: pulse 2s infinite;
+        }
+
+        .click-hint.second-click {
+            animation: bounce-hint 1s infinite;
+        }
+
+        @keyframes bounce-hint {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Page 2 - Question */
+        #page2 h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3em;
+            color: #ff1e70;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 6px rgba(255, 30, 112, 0.3);
+            animation: fadeInDown 1s ease;
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .scattered-images {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .scattered-img {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 20px;
+            border: 4px solid #ff85c0;
+            box-shadow: 0 8px 20px rgba(255, 30, 112, 0.3);
+            transition: transform 0.3s ease;
+            animation: fadeIn 1s ease;
+        }
+
+        .scattered-img:hover {
+            transform: scale(1.1) rotate(5deg);
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Scattered positioning for page 2 */
+        .scattered-img:nth-child(1) {
+            top: 20px;
+            left: 20px;
+            transform: rotate(-8deg);
+            animation-delay: 0.1s;
+        }
+
+        .scattered-img:nth-child(2) {
+            top: 20px;
+            right: 20px;
+            transform: rotate(12deg);
+            animation-delay: 0.3s;
+        }
+
+        .scattered-img:nth-child(3) {
+            bottom: 20px;
+            left: 20px;
+            transform: rotate(5deg);
+            animation-delay: 0.5s;
+        }
+
+        .scattered-img:nth-child(4) {
+            bottom: 20px;
+            right: 20px;
+            transform: rotate(-10deg);
+            animation-delay: 0.7s;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            position: fixed;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-height: 100px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        button {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.5em;
+            font-weight: 600;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #ff1e70, #ff6b9d);
+            color: white;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 30, 112, 0.4);
+        }
+
+        #noBtn {
+            background: linear-gradient(135deg, #ddd, #bbb);
+            color: #666;
+        }
+
+        .shy-text {
+            display: block;
+            color: #ff1e70;
+            font-size: 1.1em;
+            font-style: italic;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Page 3 - Yes Screen */
+        #page3 h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 4em;
+            color: #ff1e70;
+            margin-bottom: 20px;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .celebration-hearts {
+            font-size: 3em;
+            margin: 20px 0;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.2);
+            }
+            50% {
+                transform: scale(1);
+            }
+            75% {
+                transform: scale(1.1);
+            }
+        }
+
+        .success-message {
+            font-size: 1.5em;
+            color: #ff1e70;
+            margin: 20px 0;
+            animation: fadeIn 2s ease;
+        }
+
+        /* Scattered images for page 3 */
+        .scattered-images-page3 {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin: 30px 0;
+        }
+
+        .scattered-images-page3 .scattered-img:nth-child(1) {
+            top: 50%;
+            left: 5%;
+            transform: translateY(-50%) rotate(-12deg);
+        }
+
+        .scattered-images-page3 .scattered-img:nth-child(2) {
+            top: 50%;
+            right: 5%;
+            transform: translateY(-50%) rotate(8deg);
+        }
+
+        .scattered-images-page3 .scattered-img:nth-child(3) {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-5deg);
+        }
+
+        .video-container {
+            margin: 30px auto;
+            max-width: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(255, 30, 112, 0.3);
+            border: 5px solid #ff85c0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .video-container video {
+            width: 100%;
+            display: block;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff1e70;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .scattered-images {
+                height: 400px;
+            }
+            
+            .scattered-img {
+                width: 140px;
+                height: 140px;
+            }
+            
+            #page2 h1, #page3 h1 {
+                font-size: 2em;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts background -->
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <!-- Page 1 - Envelope Opening -->
+    <div id="page1" class="page active">
+        <h1>You've Got Mail! 💌</h1>
+        <div class="envelope-wrapper" onclick="handleEnvelopeClick()">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back"></div>
+                <div class="envelope-bottom-flap"></div>
+                <div class="letter">
+                    <div class="letter-content">
+                        Click again to see what's inside... 💕
+                    </div>
+                </div>
+                <div class="envelope-left-flap"></div>
+                <div class="envelope-right-flap"></div>
+                <div class="envelope-opening-mask"></div>
+                <div class="envelope-top-flap"></div>
+                <div class="heart-seal">💖</div>
+            </div>
+        </div>
+        <p class="click-hint" id="clickHint">Click to open! ✨</p>
+    </div>
+
+    <!-- Page 2 - Question -->
+    <div id="page2" class="page">
+        <h1>Will You Be My Valentine? 💕</h1>
+        
+        <div class="scattered-images">
+            <img src="images/p1.jpg" alt="Us 1" class="scattered-img">
+            <img src="images/p2.jpg" alt="Us 2" class="scattered-img">
+            <img src="images/p3.jpg" alt="Us 3" class="scattered-img">
+            <img src="images/p4.jpg" alt="Us 4" class="scattered-img">
+        </div>
+
+        <div class="button-container">
+            <button id="yesBtn" onclick="sayYes()">Yes! 💖</button>
+            <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+        </div>
+        <p class="shy-text" id="shyText">No seems to be a bit shy 🙈</p>
+    </div>
+
+    <!-- Page 3 - Yes Screen -->
+    <div id="page3" class="page">
+        <h1>Yayyyy! 🎉</h1>
+        <div class="celebration-hearts">❤️ 💕 💖 💗 💓 💝</div>
+        <p class="success-message">I'm so happy you said yes! You've made my day! 🥰</p>
+        
+        <!-- Video container in center -->
+        <div class="video-container">
+            <video id="celebrationVideo" autoplay muted loop playsinline>
+                <source src="video/Snapchat-1988701673.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <!-- Images surrounding the video -->
+        <div class="scattered-images-page3">
+            <img src="images/p5.jpg" alt="Happy 1" class="scattered-img">
+            <img src="images/p6.jpg" alt="Happy 2" class="scattered-img">
+            <img src="images/p7.jpg" alt="Happy 3" class="scattered-img">
+        </div>
+
+        <div class="celebration-hearts">💘 💞 💌 🌹 ✨</div>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('heartsBg');
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-float';
+                heart.textContent = '💖';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 8 + 's';
+                heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        createFloatingHearts();
+
+        // Two-click system for envelope
+        let envelopeOpened = false;
+
+        function handleEnvelopeClick() {
+            const envelope = document.getElementById('envelope');
+            const clickHint = document.getElementById('clickHint');
+            
+            if (!envelopeOpened) {
+                // First click - open the envelope
+                envelope.classList.add('opening');
+                clickHint.textContent = 'Click again to continue! 💕';
+                clickHint.classList.add('second-click');
+                envelopeOpened = true;
+            } else {
+                // Second click - go to next page
+                document.getElementById('page1').classList.remove('active');
+                document.getElementById('page2').classList.add('active');
+            }
+        }
+
+        // Move the "No" button away from mouse
+        let noMoveCount = 0;
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const container = noBtn.parentElement;
+            
+            if (noMoveCount === 0) {
+                // Make the no button absolutely positioned after first hover
+                noBtn.style.position = 'absolute';
+            }
+            
+            noMoveCount++;
+            
+            // Get container dimensions
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            // Calculate available space
+            const maxX = containerRect.width - btnRect.width;
+            const maxY = 150; // Limit vertical movement
+            
+            // Random position
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            // Make yes button bigger with each attempt
+            const yesBtn = document.getElementById('yesBtn');
+            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+            yesBtn.style.fontSize = (currentSize + 2) + 'px';
+        }
+
+        // Say yes - show celebration screen
+        function sayYes() {
+            document.getElementById('page2').classList.remove('active');
+            document.getElementById('page3').classList.add('active');
+            
+            // Play video when page loads
+            const video = document.getElementById('celebrationVideo');
+            video.play().catch(e => console.log('Video autoplay prevented:', e));
+            
+            createConfetti();
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#ff1e70', '#ff85c0', '#ffb3d9', '#ffd4e8', '#ff6b9d'];
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+    </script>
+</body>
+</html>
